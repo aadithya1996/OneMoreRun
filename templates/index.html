@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One More Run // TERMINAL UPLINK</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/insights.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="crt-overlay"></div>
+    <div class="scanline"></div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <span class="icon">👁‍🗨</span> ONE MORE RUN
+            </div>
+            <div class="status-bar">
+                <div class="stat-box">
+                    <span class="label">ROUND</span>
+                    <span class="value" id="round-val">0/20</span>
+                </div>
+                <div class="stat-box">
+                    <span class="label">SCORE</span>
+                    <span class="value" id="score-val">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="label">TRUST</span>
+                    <div class="progress-bar">
+                        <div class="fill" id="trust-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN GRID -->
+        <main class="game-grid">
+
+            <!-- LEFT: CONSOLE / LOG -->
+            <section class="console-panel">
+                <div class="panel-header">
+                    <span>> MISSION_LOG</span>
+                    <span class="blink">_</span>
+                </div>
+                <div class="console-output" id="game-log">
+                    <div class="log-entry system">System initialized...</div>
+                    <div class="log-entry system">Waiting for connection...</div>
+                </div>
+            </section>
+
+            <!-- RIGHT: ACTION & INSPECTOR -->
+            <section class="interaction-panel">
+
+                <!-- INSPECTOR BOX -->
+                <div class="inspector-box" id="inspector-box">
+                    <div class="avatar-container">
+                        <div class="inspector-avatar">👾</div>
+                        <div class="inspector-status" id="inspector-status">MONITORING</div>
+                    </div>
+                    <div class="inspector-dialogue">
+                        <span class="dialogue-prefix">INSPECTOR:</span>
+                        <span class="typewriter" id="inspector-text">"I'm watching you closely..."</span>
+                    </div>
+                </div>
+
+                <!-- ALERT BOX -->
+                <div class="alert-box hidden" id="alert-box">
+                    <span class="alert-icon">⚠️</span>
+                    <span id="alert-msg">INSPECTOR DETECTED SMUGGLING!</span>
+                </div>
+
+                <!-- CONTROLS -->
+                <div class="controls-area">
+                    <div class="control-group primary">
+                        <button class="btn action-btn" id="btn-smuggle-trigger">
+                            <span class="btn-title">SMUGGLE</span>
+                            <span class="btn-sub">Risk/Reward Scalable</span>
+                        </button>
+                        <button class="btn action-btn" data-action="2" id="btn-laylow">
+                            <span class="btn-title">LAY LOW</span>
+                            <span class="btn-sub">Safe: 0 | Gain: +1</span>
+                        </button>
+                    </div>
+
+                    <!-- SMUGGLE OPTIONS (Hidden by default) -->
+                    <div class="control-group smuggle-options hidden" id="smuggle-options">
+                        <div class="smuggle-header">SELECT CARGO SIZE:</div>
+                        <button class="btn sub-btn" onclick="triggerSmuggle(1)">x1 <br><span
+                                class="micro">+10/-5</span></button>
+                        <button class="btn sub-btn" onclick="triggerSmuggle(2)">x2 <br><span
+                                class="micro">+20/-10</span></button>
+                        <button class="btn sub-btn" onclick="triggerSmuggle(3)">x3 <br><span
+                                class="micro">+30/-15</span></button>
+                        <button class="btn sub-btn cancel-btn" onclick="hideSmuggleOptions()">✖</button>
+                    </div>
+
+                    <div class="control-group secondary" id="secondary-controls">
+                        <button class="btn sub-btn" data-action="3" id="btn-bribe">
+                            OFFER BRIBE (-3)
+                        </button>
+                        <button class="btn sub-btn" data-action="4" id="btn-truce">
+                            SIGNAL TRUCE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GAME OVER -->
+                <div class="game-over-screen hidden" id="game-over-screen">
+                    <h2>MISSION COMPLETE</h2>
+
+                    <div class="debrief-container" id="debrief-report">
+                        <!-- INSIGHTS INJECTED HERE -->
+                    </div>
+
+                    <div class="score-summary">
+                        <div class="final-score" id="final-score">SCORE: 150</div>
+                        <div class="verdict" id="final-verdict">MASTERMIND</div>
+                    </div>
+
+                    <button class="btn restart-btn" onclick="startGame()">REPLAY MISSION</button>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+/* INSIGHT CARDS */
+.debrief-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.insight-card {
+    background: rgba(10, 20, 10, 0.95);
+    border: 1px solid var(--dim-green);
+    padding: 1.5rem;
+    width: calc(33% - 1rem);
+    min-width: 250px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    transition: transform 0.3s ease;
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-green);
+}
+
+.insight-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dotted var(--dim-green);
+}
+
+.insight-header .concept {
+    color: var(--primary-green);
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.insight-header .rating-badge {
+    background: #222;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid #444;
+    font-weight: 900;
+    color: #fff;
+}
+
+.rank-S .rating-badge {
+    color: gold;
+    border-color: gold;
+    box-shadow: 0 0 10px gold;
+}
+
+.rank-A .rating-badge {
+    color: var(--primary-green);
+    border-color: var(--primary-green);
+}
+
+.rank-B .rating-badge {
+    color: var(--neon-blue);
+    border-color: var(--neon-blue);
+}
+
+.rank-C .rating-badge {
+    color: var(--warning-amber);
+    border-color: var(--warning-amber);
+}
+
+.rank-D .rating-badge {
+    color: var(--alert-red);
+    border-color: var(--alert-red);
+}
+
+.insight-body .definition {
+    font-size: 0.75rem;
+    font-style: italic;
+    color: #888;
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+}
+
+.insight-body .analysis {
+    font-size: 0.85rem;
+    color: #ddd;
+    line-height: 1.4;
+}
+
+.score-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
