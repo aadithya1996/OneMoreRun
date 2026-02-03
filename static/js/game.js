@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startGame();
 
     // Bind buttons
+    document.getElementById('btn-share').addEventListener('click', shareReport);
     document.getElementById('btn-smuggle-trigger').addEventListener('click', () => {
         showSmuggleOptions();
     });
@@ -255,4 +256,49 @@ function animateValue(id, start, end, duration) {
         }
     };
     window.requestAnimationFrame(step);
+}
+
+// SOCIAL SHARING
+async function shareReport() {
+    const btn = document.getElementById('btn-share');
+    const originalText = btn.innerText;
+    btn.innerText = "CAPTURING...";
+    btn.disabled = true;
+
+    try {
+        // Capture element
+        const element = document.getElementById('game-over-screen');
+        const canvas = await html2canvas(element, {
+            backgroundColor: "#050505", // Force dark background
+            scale: 2 // High res
+        });
+
+        // Copy to clipboard
+        canvas.toBlob(async (blob) => {
+            try {
+                const item = new ClipboardItem({ "image/png": blob });
+                await navigator.clipboard.write([item]);
+                log("Report image copied to clipboard!", "success");
+                showAlert("IMAGE COPIED!", "primary-green");
+            } catch (err) {
+                console.error(err);
+                log("Clipboard failed. Save image manually.", "fail");
+            }
+        });
+
+        // Open Twitter
+        const score = document.getElementById('final-score').innerText.split(': ')[1];
+        const verdict = document.getElementById('final-verdict').innerText;
+        const text = encodeURIComponent(`I completed a run in ONE MORE RUN.\nScore: ${score} // Status: ${verdict}\n\nCan you beat the Inspector? #OneMoreRun #GameTheory`);
+        window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+
+    } catch (e) {
+        console.error(e);
+        log("Share protocol failed.", "fail");
+    } finally {
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }, 2000);
+    }
 }

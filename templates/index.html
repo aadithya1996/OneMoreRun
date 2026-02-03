@@ -12,6 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Orbitron:wght@400;700;900&display=swap"
         rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -126,7 +127,12 @@
                         <div class="verdict" id="final-verdict">MASTERMIND</div>
                     </div>
 
-                    <button class="btn restart-btn" onclick="startGame()">REPLAY MISSION</button>
+                    <div class="end-game-actions">
+                        <button class="btn restart-btn" onclick="startGame()">REPLAY MISSION</button>
+                        <button class="btn share-btn" onclick="shareReport()" id="btn-share">
+                            📤 SHARE PROTOCOL
+                        </button>
+                    </div>
                 </div>
 
             </section>
