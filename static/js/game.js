@@ -265,40 +265,57 @@ async function shareReport() {
     btn.innerText = "CAPTURING...";
     btn.disabled = true;
 
+    // Image Capture Function
+    const captureImage = async () => {
+        if (typeof html2canvas === 'undefined') throw new Error("html2canvas not loaded");
+
+        const scanline = document.querySelector('.scanline');
+        const crt = document.querySelector('.crt-overlay');
+        if (scanline) scanline.style.display = 'none';
+        if (crt) crt.style.display = 'none';
+
+        try {
+            const element = document.getElementById('game-over-screen');
+            // 5s Timeout Protection
+            const canvasPromise = html2canvas(element, {
+                backgroundColor: "#050505",
+                scale: 2,
+                logging: false,
+                useCORS: true
+            });
+
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Timeout")), 5000)
+            );
+
+            const canvas = await Promise.race([canvasPromise, timeoutPromise]);
+            const blob = await new Promise(resolve => canvas.toBlob(resolve));
+            if (!blob) throw new Error("Blob failed");
+
+            await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+            return true;
+
+        } finally {
+            if (scanline) scanline.style.display = 'block';
+            if (crt) crt.style.display = 'block';
+        }
+    };
+
+    // Execution Flow (Copy Only)
     try {
-        // Capture element
-        const element = document.getElementById('game-over-screen');
-        const canvas = await html2canvas(element, {
-            backgroundColor: "#050505", // Force dark background
-            scale: 2 // High res
-        });
+        await captureImage();
 
-        // Copy to clipboard
-        canvas.toBlob(async (blob) => {
-            try {
-                const item = new ClipboardItem({ "image/png": blob });
-                await navigator.clipboard.write([item]);
-                log("Report image copied to clipboard!", "success");
-                showAlert("IMAGE COPIED!", "primary-green");
-            } catch (err) {
-                console.error(err);
-                log("Clipboard failed. Save image manually.", "fail");
-            }
-        });
-
-        // Open Twitter
-        const score = document.getElementById('final-score').innerText.split(': ')[1];
-        const verdict = document.getElementById('final-verdict').innerText;
-        const text = encodeURIComponent(`I completed a run in ONE MORE RUN.\nScore: ${score} // Status: ${verdict}\n\nCan you beat the Inspector? #OneMoreRun #GameTheory`);
-        window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+        // Success feedback
+        btn.innerText = "COPIED!";
+        alert("✅ SCORECARD COPIED!\n\nImage is ready to paste anywhere.");
 
     } catch (e) {
-        console.error(e);
-        log("Share protocol failed.", "fail");
+        console.error("Image Capture Failed:", e);
+        alert("⚠️ Image capture failed: " + e.message);
     } finally {
         setTimeout(() => {
             btn.innerText = originalText;
             btn.disabled = false;
-        }, 2000);
+        }, 1500);
     }
 }
