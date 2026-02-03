@@ -532,7 +532,8 @@ class InspectorAI:
 
         # Trust/cooperation state
         self.trust_level = 0.5  # 0 = hostile, 1 = cooperative
-        self.pending_deal = None  # Track if a deal was made
+        self.pending_deal = None  # Track if a deal was made (deprecated for immunity)
+        self.immunity_turns = 0 # How many turns we are safe
         self.consecutive_passive_rounds = 0
 
         # Personality traits (randomized per game)
@@ -569,7 +570,18 @@ class InspectorAI:
         is_bait: True if inspector is setting a trap
         announced_intent: What inspector "says" they'll do (may be lie)
         """
-        # Handle pending deals from bribes
+        # Handle active immunity
+        if self.immunity_turns > 0:
+            self.immunity_turns -= 1
+            # Check for betrayal trap?
+            if self.pending_deal == "trap": # Trap context logic
+                 # Trap trigger logic
+                 pass 
+            
+            # Simple immunity logic
+            return ACT_DONT_INSPECT, False, "I'm looking the other way."
+
+        # Handle pending deals from old logic (migration safety)
         if self.pending_deal == "accepted":
             self.pending_deal = None
             # Might honor the deal... or not
@@ -763,6 +775,11 @@ class InspectorAI:
             response = self.personality.get_bribe_response(
                 accepted=True, will_honor=not will_betray
             )
+            # Grant Immunity: This turn (1) + Next Turn (1) = 2
+            if not will_betray:
+                self.immunity_turns = 2
+                self.pending_deal = "safe"
+                
             return True, response
         else:
             response = self.personality.get_bribe_response(accepted=False, will_honor=False)
