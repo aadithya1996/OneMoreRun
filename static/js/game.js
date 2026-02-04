@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Start game on load
-    startGame();
+    // Start game on load OR show tutorial
+    if (localStorage.getItem('tutorial_seen')) {
+        startGame();
+    } else {
+        checkTutorial();
+    }
 
     // Bind buttons
     document.getElementById('btn-share').addEventListener('click', shareReport);
@@ -289,11 +293,7 @@ async function shareReport() {
             );
 
             const canvas = await Promise.race([canvasPromise, timeoutPromise]);
-            const blob = await new Promise(resolve => canvas.toBlob(resolve));
-            if (!blob) throw new Error("Blob failed");
-
-            await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-            return true;
+            return canvas;
 
         } finally {
             if (scanline) scanline.style.display = 'block';
@@ -301,13 +301,45 @@ async function shareReport() {
         }
     };
 
-    // Execution Flow (Copy Only)
+    // Execution Flow
     try {
-        await captureImage();
+        const canvas = await captureImage();
 
-        // Success feedback
-        btn.innerText = "COPIED!";
-        alert("✅ SCORECARD COPIED!\n\nImage is ready to paste anywhere.");
+        canvas.toBlob(async (blob) => {
+            if (!blob) throw new Error("Blob failed");
+
+            // Try Async Clipboard API First
+            try {
+                const item = new ClipboardItem({ "image/png": blob });
+                await navigator.clipboard.write([item]);
+                btn.innerText = "COPIED!";
+                alert("✅ SCORECARD COPIED!\n\nImage is in your clipboard.");
+            } catch (err) {
+                console.warn("Clipboard API failed, using fallback:", err);
+
+                // Fallback: Display Image in Modal for Manual Copy
+                const imgUrl = URL.createObjectURL(blob);
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.9); z-index: 10000;
+                    display: flex; flex-direction: column; align-items: center; justify-content: center;
+                `;
+                modal.innerHTML = `
+                    <h2 style="color: #0f0; margin-bottom: 20px;">RIGHT CLICK & COPY IMAGE</h2>
+                    <img src="${imgUrl}" style="max-height: 80vh; border: 2px solid #0f0; box-shadow: 0 0 20px #0f0;">
+                    <button style="margin-top: 20px; padding: 10px 30px; background: #0f0; border: none; font-weight: bold; cursor: pointer;">CLOSE</button>
+                `;
+
+                modal.querySelector('button').onclick = () => {
+                    modal.remove();
+                    URL.revokeObjectURL(imgUrl);
+                };
+
+                document.body.appendChild(modal);
+                alert("⚠️ Auto-copy failed (Browser restriction). \n\nPlease Right Click the image and select 'Copy Image'.");
+            }
+        });
 
     } catch (e) {
         console.error("Image Capture Failed:", e);
@@ -318,4 +350,22 @@ async function shareReport() {
             btn.disabled = false;
         }, 1500);
     }
+}
+
+// TUTORIAL MODAL SYSTEM
+function checkTutorial() {
+    const seen = localStorage.getItem('tutorial_seen');
+    if (!seen) {
+        document.getElementById('tutorial-overlay').classList.remove('hidden');
+    }
+}
+
+function showTutorial() {
+    document.getElementById('tutorial-overlay').classList.remove('hidden');
+}
+
+function closeTutorial() {
+    document.getElementById('tutorial-overlay').classList.add('hidden');
+    localStorage.setItem('tutorial_seen', 'true');
+    startGame();
 }

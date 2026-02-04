@@ -7,6 +7,7 @@
     <title>One More Run // TERMINAL UPLINK</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/insights.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -24,8 +25,9 @@
         <header>
             <div class="logo">
                 <span class="icon">👁‍🗨</span> ONE MORE RUN
+                <button id="btn-help" class="icon-btn" onclick="showTutorial()" title="Mission Briefing">?</button>
             </div>
-            <div class="status-bar">
+            <div class="stats-bar">
                 <div class="stat-box">
                     <span class="label">ROUND</span>
                     <span class="value" id="round-val">0/20</span>
@@ -137,6 +139,28 @@
 
             </section>
         </main>
+    </div>
+
+    <!-- TUTORIAL MODAL -->
+    <div id="tutorial-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="glitch-text">/// MISSION BRIEFING ///</h2>
+            <div class="modal-body">
+                <p><strong>Goal:</strong> Survive 20 Rounds. Maximize Score.</p>
+                <ul class="rules-list">
+                    <li><span class="highlight">📦 SMUGGLE</span>: High Risk. Fails if Inspector checks.</li>
+                    <li><span class="highlight">🛌 LAY LOW</span>: Safe. Earn small profit.</li>
+                    <li><span class="highlight">💸 BRIBE</span>: Costs points. <strong>Immunity for 2 turns</strong>.
+                    </li>
+                    <li><span class="highlight">🤝 TRUST</span>: If Trust is high, Inspector sleeps. If low, they hunt.
+                    </li>
+                </ul>
+                <div class="tip-box">
+                    > TIP: The Inspector learns your patterns. Be unpredictable.
+                </div>
+            </div>
+            <button class="btn start-mission-btn" onclick="closeTutorial()">INITIALIZE UPLINK</button>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/game.js') }}"></script>
