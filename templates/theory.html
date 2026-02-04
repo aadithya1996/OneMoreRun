@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Theory Database // ONE MORE RUN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            height: auto;
+            min-height: 100vh;
+            overflow-y: auto;
+            padding-bottom: 50px;
+        }
+
+        .theory-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--primary-green);
+            padding-bottom: 20px;
+        }
+
+        .nav-link {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            border: 1px solid var(--primary-green);
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-green);
+            color: #000;
+        }
+
+        section {
+            margin-bottom: 60px;
+            background: rgba(5, 20, 5, 0.6);
+            padding: 30px;
+            border-left: 4px solid var(--primary-green);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: var(--primary-green);
+            text-shadow: 0 0 10px var(--primary-green);
+            margin: 0;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-blue);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed var(--neon-blue);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        p {
+            font-family: 'Fira Code', monospace;
+            color: #ccc;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .concept-highlight {
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: 'Fira Code', monospace;
+            border: 1px solid #333;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            border: 1px solid #444;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .matrix-table th {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--primary-green);
+        }
+
+        .matrix-table td {
+            color: #ccc;
+        }
+
+        .payoff {
+            font-weight: bold;
+            color: var(--neon-blue);
+        }
+
+        .example-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #444;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .example-title {
+            color: var(--warning-red);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="scanline"></div>
+    <div class="crt-overlay"></div>
+
+    <div class="theory-container">
+        <header class="header-nav">
+            <h1>/// ARCHIVE_DB</h1>
+            <a href="/" class="nav-link">&lt; RETURN TO MISSION</a>
+        </header>
+
+        <!-- SECTION 1 -->
+        <section>
+            <h2>001 // THE INSPECTION GAME</h2>
+            <p>
+                This game is based on a mathematical model called the <span class="concept-highlight">Inspection
+                    Game</span>.
+                It models the interaction between a <span class="concept-highlight">Smuggler</span> (who wants to break
+                the rules for profit)
+                and an <span class="concept-highlight">Inspector</span> (who wants to catch them but pays a cost to
+                inspect).
+            </p>
+
+            <p>Here is the Payoff Matrix:</p>
+
+            <table class="matrix-table">
+                <tr>
+                    <th></th>
+                    <th>Inspector: INSPECT</th>
+                    <th>Inspector: SLEEP</th>
+                </tr>
+                <tr>
+                    <th>Smuggler: SMUGGLE</th>
+                    <td>Smuggler: <span class="payoff">-5</span> (Caught)<br>Inspector: <span class="payoff">+5</span>
+                        (Success)</td>
+                    <td>Smuggler: <span class="payoff">+10</span> (Profit)<br>Inspector: <span class="payoff">-5</span>
+                        (Failure)</td>
+                </tr>
+                <tr>
+                    <th>Smuggler: LAY LOW</th>
+                    <td>Smuggler: <span class="payoff">-1</span> (Lost Time)<br>Inspector: <span
+                            class="payoff">-2</span> (Wasted Cost)</td>
+                    <td>Smuggler: <span class="payoff">0</span> (Neutral)<br>Inspector: <span class="payoff">0</span>
+                        (Neutral)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section>
+            <h2>002 // MIXED STRATEGY NASH EQUILIBRIUM</h2>
+            <p>
+                In this game, there is no single "best move". If you <strong>always</strong> Smuggle, the Inspector will
+                <strong>always</strong> Inspect, and you will lose.
+                If you <strong>never</strong> Smuggle, the Inspector will stop inspecting to save money, leaving free
+                profit on the table.
+            </p>
+            <p>
+                The solution is a <span class="concept-highlight">Mixed Strategy</span>: You must randomize your
+                actions.
+                Mathematically, you should Smuggle exactly enough to make the Inspector indifferent between Inspecting
+                and sleeping.
+            </p>
+            <div class="example-box">
+                <span class="example-title">>> TACTICAL INSIGHT</span>
+                If the Inspector is catching you too often, you are likely too predictable. Try using a random number
+                generator (or flipping a coin) to decide your move!
+            </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section>
+            <h2>003 // SIGNALING & CHEAP TALK</h2>
+            <p>
+                Can you trust a Smuggler? <span class="concept-highlight">Signaling Theory</span> explores how valid
+                information is transferred.
+            </p>
+            <ul>
+                <li><strong>TRUCE (Cheap Talk)</strong>: Saying "I won't smuggle" is cost-free. Since it costs nothing,
+                    a Smuggler can easily lie. Therefore, it is a weak signal.</li>
+                <li><strong>BRIBE (Costly Signal)</strong>: Buying a bribe costs points (-3). Because it is expensive,
+                    it carries weight. It buys you immunity because it proves you are willing to pay to avoid
+                    inspection.</li>
+            </ul>
+        </section>
+
+        <section style="text-align: center; border: none; background: none;">
+            <a href="/" class="nav-link" style="padding: 20px 40px; font-size: 1.5rem;">INITIALIZE UPLINK &gt;&gt;</a>
+        </section>
+
+    </div>
+</body>
+
+</html>

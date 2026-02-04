@@ -159,6 +159,10 @@ class WebGameSession:
         self.history.append(round_result)
         return round_result
 
+@app.route('/theory')
+def theory():
+    return render_template('theory.html')
+
 @app.route('/')
 def index():
     return render_template('index.html')
