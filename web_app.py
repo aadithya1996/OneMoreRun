@@ -11,8 +11,11 @@ from inspection_game import (
     ACT_INSPECT, ACT_DONT_INSPECT, ACT_ACCEPT_BRIBE, ACT_SET_TRAP,
     PAYOFF_SMUGGLE_INSPECT, PAYOFF_SMUGGLE_DONT, 
     PAYOFF_LAYLOW_INSPECT, PAYOFF_LAYLOW_DONT,
-    BRIBE_COST, ACTION_NAMES
+    BRIBE_COST, ACTION_NAMES, LLMDialogueGenerator
 )
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -28,9 +31,14 @@ class WebGameSession:
         self.rng = random.Random(self.seed)
         
         # Initialize AI
-        # Note: We are disabling LLM for the web version for simplicity unless configured
-        # You could pass config here if you want to enable it
-        self.inspector = InspectorAI(self.seed, llm_generator=None)
+        # Enable LLM if API Key is present
+        api_key = os.getenv("OPENAI_API_KEY")
+        llm_gen = None
+        if api_key:
+            llm_gen = LLMDialogueGenerator("openai", api_key, {})
+            print(">> LLM ENABLED for new session")
+        
+        self.inspector = InspectorAI(self.seed, llm_generator=llm_gen)
         self.advisor = TeachingAdvisor(self.rng)
         # Import GameTheoryTutor inside WebSession if not available globally, or assume it's imported
         from inspection_game import GameTheoryTutor
