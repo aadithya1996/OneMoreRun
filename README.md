@@ -4,7 +4,8 @@
 
 **One More Run** is a psychological strategy game based on Game Theory concepts (The Inspection Game, Signaling Theory, Mixed Strategy Nash Equilibrium). You play as a Smuggler against an AI Inspector.
 
-![One More Run Interface](https://via.placeholder.com/800x400?text=Cyberpunk+Terminal+Interface)
+<img width="2588" height="1552" alt="image" src="https://github.com/user-attachments/assets/c34672e8-9b91-4c11-8a2e-be37765939a6" />
+
 
 ## 🎮 The Mission
 
