@@ -31,13 +31,14 @@ class WebGameSession:
         self.rng = random.Random(self.seed)
         
         # Initialize AI
-        # LLM Disabled for production
-        # api_key = os.getenv("OPENAI_API_KEY")
-        # llm_gen = None
-        # if api_key:
-        #     llm_gen = LLMDialogueGenerator("openai", api_key, {})
+        # Enable LLM if API Key is present
+        api_key = os.getenv("OPENAI_API_KEY")
+        llm_gen = None
+        if api_key:
+            llm_gen = LLMDialogueGenerator("openai", api_key, {})
+            print(">> LLM ENABLED for new session")
         
-        self.inspector = InspectorAI(self.seed, llm_generator=None)
+        self.inspector = InspectorAI(self.seed, llm_generator=llm_gen)
         self.advisor = TeachingAdvisor(self.rng)
         # Import GameTheoryTutor inside WebSession if not available globally, or assume it's imported
         from inspection_game import GameTheoryTutor
