@@ -42,7 +42,7 @@ class WebGameSession:
         self.advisor = TeachingAdvisor(self.rng)
         # Import GameTheoryTutor inside WebSession if not available globally, or assume it's imported
         from inspection_game import GameTheoryTutor
-        self.tutor = GameTheoryTutor()
+        self.tutor = GameTheoryTutor(llm_gen)
         
         self.round_num = 0
         self.score = 0

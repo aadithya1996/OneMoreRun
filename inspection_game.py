@@ -22,9 +22,9 @@ from typing import Optional, Dict, Any
 # GAME CONFIGURATION
 # =============================================================================
 
-ROUNDS_PER_GAME = 20
-EARLY_GAME_END = 6
-MID_GAME_END = 14
+ROUNDS_PER_GAME = 3
+EARLY_GAME_END = 1
+MID_GAME_END = 2
 
 # Timing
 DELAY_PRINT = 0.02
@@ -903,9 +903,78 @@ class TeachingAdvisor:
 
 class GameTheoryTutor:
     """Provides deep game theory lessons based on playstyle."""
+
+    def __init__(self, llm_generator=None):
+        self.llm = llm_generator
+
+    def generate_llm_report(self, history, final_score, trust_level):
+        """Generate insights using LLM."""
+        if not self.llm:
+            return None
+            
+        context = {
+            "score": final_score,
+            "trust": trust_level,
+            "history_summary": self._summarize_history(history)
+        }
+        
+        prompt = f"""
+        Analyze this player's game theory strategy in 'The Inspection Game'.
+        
+        PLAYER STATS:
+        - Final Score: {context['score']} (Max possible ~400, Min ~-100)
+        - Final Trust Level: {context['trust']:.2f} (0.0 to 1.0)
+        
+        GAME HISTORY (Last 20 moves):
+        {context['history_summary']}
+        
+        YOUR TASK:
+        Generate 3 distinct Game Theory Insights based on their actual play.
+        Focus on concepts like: Mixed Strategy, Signaling, Truthfulness, Risk Aversion, Exploitation, Nash Equilibrium.
+        
+        OUTPUT FORMAT:
+        Return ONLY a JSON array with 3 objects. No markdown formatting.
+        [
+            {{
+                "concept": "Name of Concept",
+                "definition": "Brief definition of the concept.",
+                "analysis": "Specific analysis of how the player used (or failed) this concept.",
+                "rating": "S/A/B/C/D" (S=Master, C=Average, D=Poor)
+            }}
+        ]
+        """
+        
+        try:
+            response = self.llm.generate({}, prompt)
+            
+            # Sanitization in case of markdown code blocks
+            if "```json" in response:
+                response = response.split("```json")[1].split("```")[0].strip()
+            elif "```" in response:
+                response = response.split("```")[1].strip()
+                
+            return json.loads(response)
+        except Exception as e:
+            print(f"LLM Insight Error: {e}")
+            return None
+
+    def _summarize_history(self, history):
+        """Convert history list to distinct string summary."""
+        summary = []
+        for i, h in enumerate(history):
+            summary.append(f"R{i+1}: Player={h.get('player_action_name', '?')}, Inspector={h.get('inspector_action_name', '?')}, Trap={h.get('was_trap', False)}")
+        return "\n".join(summary)
     
     def generate_report(self, history, final_score, trust_level):
         """Analyze the game and return strict game theory concepts."""
+        
+        # Try LLM first
+        if self.llm:
+            llm_report = self.generate_llm_report(history, final_score, trust_level)
+            if llm_report:
+                return llm_report
+        
+        # Fallback to static logic
         report = []
         
         # Calculate stats
@@ -993,7 +1062,7 @@ class InspectionGame:
 
         self.inspector = InspectorAI(self.seed, self.llm_generator)
         self.advisor = TeachingAdvisor(self.rng)
-        self.tutor = GameTheoryTutor() # Meta-analysis
+        self.tutor = GameTheoryTutor(self.llm_generator) # Meta-analysis
 
         self.round_num = 0
         self.score = 0
