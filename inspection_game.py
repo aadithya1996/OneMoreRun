@@ -22,9 +22,9 @@ from typing import Optional, Dict, Any
 # GAME CONFIGURATION
 # =============================================================================
 
-ROUNDS_PER_GAME = 3
-EARLY_GAME_END = 1
-MID_GAME_END = 2
+ROUNDS_PER_GAME = 20
+EARLY_GAME_END = 6
+MID_GAME_END = 12
 
 # Timing
 DELAY_PRINT = 0.02
